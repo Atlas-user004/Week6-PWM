@@ -54,6 +54,8 @@ uint8_t ADCUpdateFlag = 0;
 uint16_t ADCFeedBack = 0;
 
 uint16_t PWMOut = 3000;
+float Error = 0.0;
+float Kp = 0.0;
 
 uint64_t _micro = 0;
 uint64_t TimeOutputLoop = 0;
@@ -133,7 +135,9 @@ int main(void)
 	  {
 	  	TimeOutputLoop = micros();
 	  	// #001
-	  	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, PWMOut);
+	  	Error = 1241.0 - ADCFeedBack; // 1241.0 is set point that be 1 V
+	  	PWMOut = PWMOut+(Kp*Error);
+	  	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, PWMOut); // if TIM1 increase until it equal to PWMOut. TIM1 will be set to 0 again and start increase again. So that will be PWM.
 	  }
 	  if (ADCUpdateFlag)
 	  {
